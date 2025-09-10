@@ -27,7 +27,7 @@ const Todo = () => {
           placeholder="Add Your To Do"
           className="bg-transparent border-0 outline-none flex-1 h-12 pl-6 pr-2 placeholder: text-slate-600 font-semibold text-[20px]"
         />
-        <button className="border-none rounded-full bg-[linear-gradient(-60deg,_#ff5858_0%,_#f09819_100%)] h-12 w-26 font-semibold text-[20px] text-gray-200">
+        <button onClick={add} className="border-none rounded-full bg-[linear-gradient(-60deg,_#ff5858_0%,_#f09819_100%)] h-12 w-26 font-semibold text-[20px] text-gray-200">
           ADD+
         </button>
       </div>
