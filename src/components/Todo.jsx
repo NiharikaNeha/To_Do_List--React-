@@ -8,7 +8,7 @@ const Todo = () => {
 
     const add = () => {
       const inputText = inputRef.current.value;
-      console.log(inp);
+      console.log(inputText);
     }
 
   return (
