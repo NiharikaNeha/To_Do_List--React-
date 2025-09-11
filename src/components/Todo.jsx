@@ -3,96 +3,103 @@ import todo_img from "../assets/todo_icon.png";
 import Todoitems from "./Todoitems";
 
 const Todo = () => {
-  const [ToDo, setToDo] = useState(localStorage.getItem("todos") ? JSON.parse(localStorage.getItem("todos")) : []);
+  const [ToDo, setToDo] = useState(
+    localStorage.getItem("todos")
+      ? JSON.parse(localStorage.getItem("todos"))
+      : []
+  );
   const inputRef = useRef();
 
   const add = () => {
     const inputText = inputRef.current.value.trim();
+    if (inputText === "") return;
 
-    if (inputText === "") {
-      return null;
-    }
     const newTodo = {
       id: Date.now(),
       text: inputText,
       isComplete: false,
     };
+
     setToDo((prev) => [...prev, newTodo]);
     inputRef.current.value = "";
   };
 
-  const delete_todo = (id)=> {
-    setToDo((prvTodo)=> {
-      return prvTodo.filter((ToDo)=> ToDo.id !== id)
-    })
-  }
+  const delete_todo = (id) => {
+    setToDo((prevTodo) => prevTodo.filter((todo) => todo.id !== id));
+  };
 
-  const toggle = (id)=>{
-    setToDo((prevTodos)=>{
-      return prevTodos.map((todo)=>{
-        if(todo.id === id){
-          return {...todo, isComplete: !todo.isComplete}
-        }
-        return todo;
-      })
-    })
-  }
+  const toggle = (id) => {
+    setToDo((prevTodos) =>
+      prevTodos.map((todo) =>
+        todo.id === id ? { ...todo, isComplete: !todo.isComplete } : todo
+      )
+    );
+  };
 
-  useEffect(()=>{
-  localStorage.setItem("todos", JSON.stringify(ToDo))
-  },[ToDo])
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(ToDo));
+  }, [ToDo]);
+
+  // Function to handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      add();
+    }
+  };
 
   return (
-    <div className="bg-[linear-gradient(to_top,_lightgrey_0%,_lightgrey_1%,_#e0e0e0_26%,_#efefef_48%,_#d9d9d9_75%,_#bcbcbc_100%)] w-11/12 max-w-md flex flex-col p-7 min-h-[550px] rounded-xl place-self-center mt-11">
-      {/* Title */}
-      <div className="flex items-center mt-7 gap-2">
-        <img src={todo_img} alt="" className="w-8" />
-        <h1 className="text-3xl font-bold">
-          <span className="bg-[linear-gradient(-60deg,_#ff5858_0%,_#f09819_100%)] text-transparent bg-clip-text">
-            M
-          </span>
-          y{" "}
-          <span className="bg-[linear-gradient(-60deg,_#ff5858_0%,_#f09819_100%)] text-transparent bg-clip-text">
-            T
-          </span>
-          o-
-          <span className="bg-[linear-gradient(-60deg,_#ff5858_0%,_#f09819_100%)] text-transparent bg-clip-text">
-            D
-          </span>
-          o
-        </h1>
-      </div>
+    <div className="min-h-screen flex justify-center items-start sm:items-center bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-300 px-3 py-6 sm:py-10">
+      <div className="w-full max-w-md sm:max-w-2xl bg-white/90 backdrop-blur-md shadow-xl rounded-2xl p-5 sm:p-8 flex flex-col">
+        
+        {/* Title */}
+        <div className="flex items-center justify-center sm:justify-start gap-2 mb-6">
+          <img src={todo_img} alt="todo" className="w-8 sm:w-10" />
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-center sm:text-left">
+            <span className="bg-gradient-to-r from-pink-500 to-orange-400 text-transparent bg-clip-text">
+              My To-Do
+            </span>
+          </h1>
+        </div>
 
-      {/* Input Box */}
-      <div className="flex items-center my-7 bg-[linear-gradient(120deg,_#fdfbfb_0%,_#ebedee_100%)] rounded-4xl">
-        <input
-          type="text"
-          ref={inputRef}
-          placeholder="Add Your To Do"
-          className="bg-transparent border-0 outline-none flex-1 h-12 pl-6 pr-2 placeholder: text-slate-800 font-semibold text-[18px]"
-        />
+        {/* Input Box */}
+        <div className="flex flex-col sm:flex-row items-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl shadow-inner p-2 sm:p-3 mb-6">
+          <input
+            type="text"
+            ref={inputRef}
+            placeholder="Add your task..."
+            onKeyDown={handleKeyPress}   // 👈 added here
+            className="bg-transparent border-0 outline-none flex-1 h-12 px-3 sm:px-4 placeholder:text-gray-500 font-medium text-[15px] sm:text-[17px]"
+          />
+        </div>
+        
         <button
           onClick={add}
-          className="border-none rounded-full bg-[linear-gradient(-60deg,_#ff5858_0%,_#f09819_100%)] h-12 w-26 font-semibold text-[18px] text-gray-200"
+          className="w-full sm:w-28 mt-3 sm:mt-0 sm:ml-3 rounded-xl bg-gradient-to-r from-pink-500 to-orange-400
+          h-12 font-semibold text-[15px] sm:text-[17px] text-white shadow-md hover:shadow-lg transition-all active:scale-95"
         >
-          ADD+
+          ADD +
         </button>
-      </div>
 
-      {/* To Do List */}
-      <div>
-        {ToDo.map((item, index) => {
-          return (
-            <Todoitems
-              key={index}
-              text={item.text}
-              id={item.id}
-              isComplete={item.isComplete}
-              delete_todo={delete_todo}
-              toggle={toggle}
-            />
-          );
-        })}
+        {/* To Do List */}
+        <div className="flex flex-col gap-3 overflow-y-auto max-h-[400px] sm:max-h-[450px] pr-1 
+          scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+          {ToDo.length > 0 ? (
+            ToDo.map((item) => (
+              <Todoitems
+                key={item.id}
+                text={item.text}
+                id={item.id}
+                isComplete={item.isComplete}
+                delete_todo={delete_todo}
+                toggle={toggle}
+              />
+            ))
+          ) : (
+            <p className="text-gray-500 text-center mt-6 text-sm sm:text-base">
+              🎉 No tasks yet! Add one above.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
